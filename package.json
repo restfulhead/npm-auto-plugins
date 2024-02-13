@@ -1,0 +1,25 @@
+{
+  "name": "@restfulhead/npm-auto-plugins",
+  "version": "1.0.0",
+  "description": "Workspace cotaining plugins for Intuit Auto",
+  "author": "Patrick Ruhkopf",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/restfulhead/npm-auto-plugins.git"
+  },
+  "homepage": "https://github.com/restfulhead/npm-auto-plugins",
+  "bugs": {
+    "url": "https://github.com/restfulhead/npm-auto-plugins/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "auto": "11.0.4"
+  }
+}

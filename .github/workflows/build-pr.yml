@@ -1,0 +1,51 @@
+name: Build and test pull request
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches-ignore:
+      - release
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.git-ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+
+      - name: Install dependencies
+        env:
+          CI: true
+        run: |
+          npm ci
+
+      - name: Build and Test workspaces
+        env:
+          CI: true
+        run: |
+          npm audit --omit=dev
+          npm run build -ws
+          npm run test -ws
+
+      - if: ${{ always() }}
+        name: Clean working directory
+        run: |
+          rm -r *

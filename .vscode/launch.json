@@ -1,0 +1,62 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Auto changelog",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/filter-by-path",
+      "program": "${workspaceFolder}/node_modules/auto/dist/bin/auto",
+      "args": [
+        "changelog",
+        "-d",
+        "-v"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "sourceMaps": true,
+      "outputCapture": "std",
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "[filter-by-path] Current file UNIT test",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/filter-by-path",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": [
+        "${relativeFile}",
+        "--config",
+        "${workspaceFolder}/packages/filter-by-path/package.json",
+        "--testTimeout",
+        "300000",
+        "--no-cache",
+        "--runInBand",
+        "--detectOpenHandles"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/packages/filter-by-path/dist/**/*.js"
+      ],
+      "outputCapture": "std",
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ]
+    }
+  ]
+}
