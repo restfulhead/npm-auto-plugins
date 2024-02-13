@@ -26,7 +26,7 @@ const setup = () => {
 describe('Omit Commits Plugin', () => {
   test('should not filter the commit single file', async () => {
     const hooks = setup()
-    const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-path/src/index.ts')] })
+    const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-workspace-path/src/index.ts')] })
     expect(await hooks.omitCommit.promise(commit)).toBeUndefined()
   })
 
@@ -38,7 +38,7 @@ describe('Omit Commits Plugin', () => {
 
   test('should not filter the commit multi file', async () => {
     const hooks = setup()
-    const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-path/src/index.ts'), '/outside'] })
+    const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-workspace-path/src/index.ts'), '/outside'] })
     expect(await hooks.omitCommit.promise(commit)).toBeUndefined()
   })
 
@@ -52,7 +52,7 @@ describe('Omit Commits Plugin', () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo', {
       labels: ['skip-release'],
-      files: [path.resolve('.', 'packages/filter-by-path/src/index.ts')],
+      files: [path.resolve('.', 'packages/filter-by-workspace-path/src/index.ts')],
     })
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
   })
@@ -60,7 +60,7 @@ describe('Omit Commits Plugin', () => {
   test('should skip commit marked as skip-ci', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo [skip ci]', {
-      files: [path.resolve('.', 'packages/filter-by-path/src/index.ts')],
+      files: [path.resolve('.', 'packages/filter-by-workspace-path/src/index.ts')],
     })
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
   })
