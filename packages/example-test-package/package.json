@@ -22,7 +22,7 @@
     },
     "auto": {
         "plugins": [
-            "../filter-by-path/dist/index.js",
+            "../filter-by-workspace-path/dist/index.js",
             "npm"
         ],
         "labels": [
