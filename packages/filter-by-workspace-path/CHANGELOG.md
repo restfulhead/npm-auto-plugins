@@ -1,3 +1,16 @@
+# (Wed Feb 14 2024)
+
+#### 🔩 Internal
+
+- chore: prepare release [#4](https://github.com/restfulhead/npm-auto-plugins/pull/4) ([@restfulhead](https://github.com/restfulhead))
+- refactor: renamed to follow auto's naming convention [#3](https://github.com/restfulhead/npm-auto-plugins/pull/3) ([@restfulhead](https://github.com/restfulhead))
+
+#### Authors: 1
+
+- Patrick Ruhkopf ([@restfulhead](https://github.com/restfulhead))
+
+---
+
 # (Tue Feb 13 2024)
 
 
