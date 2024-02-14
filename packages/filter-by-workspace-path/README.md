@@ -11,7 +11,7 @@ To start using this plugin, add it to your `.autorc` config, for example:
 ```json
 {
   "plugins": [
-    "@restfulhead/npm-auto-plugin-filter-by-workspace-path",
+    "@restfulhead/auto-plugin-filter-by-workspace-path",
     "npm",
   ]
 }
