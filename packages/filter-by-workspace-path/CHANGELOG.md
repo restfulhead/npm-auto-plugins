@@ -1,3 +1,19 @@
+# v0.2.0 (Fri Feb 16 2024)
+
+#### 🚀 Enhancement
+
+- feat: set version to 'noVersion' if no commits are in scope [#11](https://github.com/restfulhead/npm-auto-plugins/pull/11) ([@restfulhead](https://github.com/restfulhead))
+
+#### 🐛 Patch
+
+- fix: missing version in changelog file [#12](https://github.com/restfulhead/npm-auto-plugins/pull/12) ([@restfulhead](https://github.com/restfulhead))
+
+#### Authors: 1
+
+- Patrick Ruhkopf ([@restfulhead](https://github.com/restfulhead))
+
+---
+
 # v0.1.0 (Fri Feb 16 2024)
 
 #### 🚀 Enhancement
