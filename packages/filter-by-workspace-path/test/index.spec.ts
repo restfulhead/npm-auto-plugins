@@ -65,7 +65,7 @@ describe('Omit Commits Plugin', () => {
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
   })
 
-  fit('should skip commit in a sub-directory with the same prefix', async () => {
+  it('should skip commit in a sub-directory with the same prefix', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-workspace-path-sub-dir/src/index.ts')] })
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
