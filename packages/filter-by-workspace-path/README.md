@@ -17,14 +17,17 @@ To start using this plugin, add it to your `.autorc` config, for example:
 }
 ```
 
-If you are using this for NPM workspaces/sub-packages, then add this configuration to each workspace. Then run e.g. `auto changelog` from 
-each workspace directory. Observe that commits with only files from directories outside the workspace directory are omitted.
+Then, if your project uses NPM workspaces and you run e.g. `auto changelog` not from the root directory, but directly from a workspace
+directory, then the changelog will only include pull requests that contain files inside the current workspace directory.
 
 However, carefully read the following caveats section.
 
 ## Caveats
 
-* Note that this plugin also ommits commits that are either labeled with `skip-release` or have `[skip ci]` in their commit message.
+* Note that this plugin also ommits commits that
+  * do not have a related pull request (e.g. pushed directly to the release branch)
+  * belong to pull requests that has the `skip-release` label attached
+  * have `[skip ci]` in their commit message
 * By default, `auto version` seems to set the version to `patch` instead of `noVersion` even if all commits were filtered out.
   * Therefore, to detect if there were no changes in this case, you have to use the `auto changelog` command instead and then check whether
     a changelog was actually generated. :-/
