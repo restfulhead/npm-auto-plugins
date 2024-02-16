@@ -4,6 +4,10 @@ import { execSync } from 'child_process'
 import * as path from 'path'
 
 function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: IExtendedCommit, logger: ILogger): boolean {
+  if (!commit.pullRequest) {
+    return true
+  }
+
   // auto adds the current path to the file paths reported from git, so we need to undo this
   const fixedFiles = commit.files.map((file) => path.relative(currentDir, file))
   const wsDir = path.join(currentWorkspace, path.sep)
