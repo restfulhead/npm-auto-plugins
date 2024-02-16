@@ -5,12 +5,13 @@
       "name": "Auto changelog",
       "type": "node",
       "request": "launch",
-      "cwd": "${workspaceFolder}/packages/filter-by-workspace-path",
+      "cwd": "${workspaceFolder}/packages/example-test-package",
       "program": "${workspaceFolder}/node_modules/auto/dist/bin/auto",
       "args": [
         "changelog",
         "-d",
-        "-v"
+        "--from",
+        "@restfulhead/npm-auto-plugin-example-test-package_v0.0.2"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "sourceMaps": true,
