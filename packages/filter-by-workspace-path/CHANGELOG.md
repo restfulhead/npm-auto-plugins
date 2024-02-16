@@ -1,5 +1,21 @@
 # (Fri Feb 16 2024)
 
+#### 🚀 Enhancement
+
+- feat: omit commits that aren't related to a pull request [#9](https://github.com/restfulhead/npm-auto-plugins/pull/9) ([@restfulhead](https://github.com/restfulhead))
+
+#### 📝 Documentation
+
+- doc: provide more details about the merge commit issue [#8](https://github.com/restfulhead/npm-auto-plugins/pull/8) ([@restfulhead](https://github.com/restfulhead))
+
+#### Authors: 1
+
+- Patrick Ruhkopf ([@restfulhead](https://github.com/restfulhead))
+
+---
+
+# (Fri Feb 16 2024)
+
 #### 🐛 Patch
 
 - fix: filter out commits in other ws dir with the same prefix [#5](https://github.com/restfulhead/npm-auto-plugins/pull/5) ([@restfulhead](https://github.com/restfulhead))
