@@ -1,3 +1,15 @@
+# v0.2.1 (Fri Feb 16 2024)
+
+#### 🔩 Internal
+
+- fix: revert npm publish ci script [#14](https://github.com/restfulhead/npm-auto-plugins/pull/14) ([@restfulhead](https://github.com/restfulhead))
+
+#### Authors: 1
+
+- Patrick Ruhkopf ([@restfulhead](https://github.com/restfulhead))
+
+---
+
 # v0.2.0 (Fri Feb 16 2024)
 
 #### 🚀 Enhancement
