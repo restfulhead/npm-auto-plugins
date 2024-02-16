@@ -24,16 +24,16 @@ However, carefully read the following caveats section.
 
 ## Caveats
 
-* Note that this plugin also ommits commits that
+* Note that this plugin also omits commits that
   * do not have a related pull request (e.g. pushed directly to the release branch)
   * belong to pull requests that has the `skip-release` label attached
   * have `[skip ci]` in their commit message
-* By default, `auto version` seems to set the version to `patch` instead of `noVersion` even if all commits were filtered out.
-  * Therefore, to detect if there were no changes in this case, you have to use the `auto changelog` command instead and then check whether
-    a changelog was actually generated. :-/
+* This plugin modifies the behavior of `auto version`. By default, it seems to set the version to `patch` instead of `noVersion` even if all 
+  commits were omitted. With this plugin, `noVersion` is returned if there are no relevant commits.
 * While the title in the GitHub release notes is correct, the version is missing in the `CHANGELOG.md` file for currently unknown reasons
 * You can't use the `shipit` command, because for example, the version in each package should only contain the version number 
-  (e.g. `v1.0.0`), but the tag and Github release must include the package name to avoid ambigious release names/tags.
+  (e.g. `v1.0.0`), but the tag and Github release must include the package name to avoid ambigious release names/tags. Maybe this 
+  customization can be added to the plugin in future. (Contributions welcome!)
   * However, you can use individual commands to make this work. To see how to setup a release process that takes all of this into account, 
     take a look at the [release.yml GitHub action](../../.github/workflows/release.yml) in this repository.
 * If you create merge-commits against your release/target branch, then changes to files in your release/target branch become part of the 
