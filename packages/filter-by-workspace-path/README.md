@@ -30,7 +30,6 @@ However, carefully read the following caveats section.
   * have `[skip ci]` in their commit message
 * This plugin modifies the behavior of `auto version`. By default, it seems to set the version to `patch` instead of `noVersion` even if all 
   commits were omitted. With this plugin, `noVersion` is returned if there are no relevant commits.
-* While the title in the GitHub release notes is correct, the version is missing in the `CHANGELOG.md` file for currently unknown reasons
 * You can't use the `shipit` command, because for example, the version in each package should only contain the version number 
   (e.g. `v1.0.0`), but the tag and Github release must include the package name to avoid ambigious release names/tags. Maybe this 
   customization can be added to the plugin in future. (Contributions welcome!)

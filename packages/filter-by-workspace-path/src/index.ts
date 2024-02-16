@@ -1,6 +1,7 @@
 import { execSync } from 'child_process'
 import * as path from 'path'
-import { Auto, IExtendedCommit, ILogger, IPlugin, SEMVER } from '@auto-it/core'
+import { Auto, IExtendedCommit, ILogger, IPlugin, SEMVER, inFolder } from '@auto-it/core'
+import { inc, ReleaseType } from 'semver'
 
 function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: IExtendedCommit, logger: ILogger): boolean {
   if (!commit.pullRequest) {
@@ -11,7 +12,8 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
   const fixedFiles = commit.files.map((file) => path.relative(currentDir, file))
   const wsDir = path.join(currentWorkspace, path.sep)
 
-  const atLeastOneFileInCurrentDir = fixedFiles.find((file) => file.startsWith(wsDir))
+  const atLeastOneFileInCurrentDir = fixedFiles.find((file) => inFolder(wsDir, file))
+
   if (!atLeastOneFileInCurrentDir) {
     logger.verbose.log(`All files are outside the current workspace directory ('${wsDir}'). Omitting commit '${commit.hash}'.`)
     return true
@@ -52,6 +54,14 @@ export default class FilterByWorkspacePathPlugin implements IPlugin {
           return SEMVER.noVersion
         }
         return origGetVersion(from, to)
+      }
+
+      release.calcNextVersion = async (lastTag: string) => {
+        const bump = await release.getSemverBump(lastTag)
+        const matches = lastTag.match(/(\d+\.\d+\.\d+)/)
+        const lastVersion = matches ? matches[0] : lastTag
+
+        return inc(lastVersion, bump as ReleaseType)
       }
     })
   }
