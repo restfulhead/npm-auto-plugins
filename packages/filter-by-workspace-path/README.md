@@ -34,6 +34,11 @@ However, carefully read the following caveats section.
   * However, you can use individual commands to make this work. To see how to setup a release process that takes all of this into account, 
     take a look at the [release.yml GitHub action](../../.github/workflows/release.yml) in this repository.
 * If you create merge-commits against your release/target branch, then changes to files in your release/target branch become part of the 
-  commit also. Those currently won't be filtered out. I'm not if there is a way to detect/filter out those files in a commit that 
-  are caused by the merge. If so, this would be a good change to add. In the meantime, you can add a label `skip-release` to the merge PR
-  to exclude it completely.
+  commit also. Those currently won't be filtered out. I'm not sure if there is a way to detect/filter out those files in a commit that 
+  are caused by the merge while keeping the "actual" changed files. If so, this would be a good issue to fix. In the meantime, you can add 
+  a label `skip-release` to the merge PR to exclude it completely. This on the other hand only works if you're working with a separate 
+  release branch. For example:
+  * Create a new pull request from you feature branch against your `main` branch. Label it e.g. with `release-minor`.
+  * Merge the changes into `main`, but don't release from `main`.
+  * Create another pull request to merge changes from `main` into your `release` branch. Label it with `skip-release`.
+  * Merge this PR into your `release` branch and then run the release process from this branch.
