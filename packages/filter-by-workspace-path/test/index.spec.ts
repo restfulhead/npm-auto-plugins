@@ -24,31 +24,31 @@ const setup = () => {
 }
 
 describe('Omit Commits Plugin', () => {
-  test('should not filter the commit single file', async () => {
+  it('should not filter the commit single file', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-workspace-path/src/index.ts')] })
     expect(await hooks.omitCommit.promise(commit)).toBeUndefined()
   })
 
-  test('should filter the commit single file', async () => {
+  it('should filter the commit single file', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo', { files: ['/outside'] })
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
   })
 
-  test('should not filter the commit multi file', async () => {
+  it('should not filter the commit multi file', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-workspace-path/src/index.ts'), '/outside'] })
     expect(await hooks.omitCommit.promise(commit)).toBeUndefined()
   })
 
-  test('should filter the commit single file', async () => {
+  it('should filter the commit single file', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo', { files: ['/outside', '/anotheroutsider'] })
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
   })
 
-  test('should skip commit labeled as skip-release', async () => {
+  it('should skip commit labeled as skip-release', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo', {
       labels: ['skip-release'],
@@ -57,11 +57,17 @@ describe('Omit Commits Plugin', () => {
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
   })
 
-  test('should skip commit marked as skip-ci', async () => {
+  it('should skip commit marked as skip-ci', async () => {
     const hooks = setup()
     const commit = makeCommitFromMsg('foo [skip ci]', {
       files: [path.resolve('.', 'packages/filter-by-workspace-path/src/index.ts')],
     })
+    expect(await hooks.omitCommit.promise(commit)).toBe(true)
+  })
+
+  fit('should skip commit in a sub-directory with the same prefix', async () => {
+    const hooks = setup()
+    const commit = makeCommitFromMsg('foo', { files: [path.resolve('.', 'packages/filter-by-workspace-path-sub-dir/src/index.ts')] })
     expect(await hooks.omitCommit.promise(commit)).toBe(true)
   })
 })

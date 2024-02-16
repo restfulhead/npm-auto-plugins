@@ -6,10 +6,11 @@ import * as path from 'path'
 function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: IExtendedCommit, logger: ILogger): boolean {
   // auto adds the current path to the file paths reported from git, so we need to undo this
   const fixedFiles = commit.files.map((file) => path.relative(currentDir, file))
+  const wsDir = path.join(currentWorkspace, path.sep)
 
-  const atLeastOneFileInCurrentDir = fixedFiles.find((file) => file.startsWith(currentWorkspace))
+  const atLeastOneFileInCurrentDir = fixedFiles.find((file) => file.startsWith(wsDir))
   if (!atLeastOneFileInCurrentDir) {
-    logger.verbose.log(`All files are outside the current workspace directory ('${currentWorkspace}'). Omitting commit '${commit.hash}'.`)
+    logger.verbose.log(`All files are outside the current workspace directory ('${wsDir}'). Omitting commit '${commit.hash}'.`)
     return true
   } else {
     if (commit.labels?.includes('skip-release') || commit.subject?.includes('[skip ci]')) {
@@ -17,7 +18,7 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
       return true
     }
 
-    logger.verbose.log(`At least one file is in the current workspace ('${currentWorkspace}'). Including commit '${commit.hash}'.`)
+    logger.verbose.log(`At least one file is in the current workspace ('${wsDir}'). Including commit '${commit.hash}'.`)
     return false
   }
 }
