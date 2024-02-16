@@ -1,5 +1,11 @@
 # (Fri Feb 16 2024)
 
+
+
+---
+
+# (Fri Feb 16 2024)
+
 #### 🔩 Internal
 
 - chore: prepare release [#6](https://github.com/restfulhead/npm-auto-plugins/pull/6) ([@restfulhead](https://github.com/restfulhead))
