@@ -11,7 +11,32 @@
         "changelog",
         "-d",
         "--from",
-        "@restfulhead/npm-auto-plugin-example-test-package_v0.0.2"
+        "@restfulhead/npm-auto-plugin-example-test-package_v0.0.3"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "sourceMaps": true,
+      "outputCapture": "std",
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Auto version",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/example-test-package",
+      "program": "${workspaceFolder}/node_modules/auto/dist/bin/auto",
+      "args": [
+        "version",
+        "--from",
+        "@restfulhead/npm-auto-plugin-example-test-package_v0.0.3"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "sourceMaps": true,
@@ -36,7 +61,7 @@
       "args": [
         "${relativeFile}",
         "--config",
-        "${workspaceFolder}/packages/filter-by-workspace-path/package.json",
+        "${workspaceFolder}/packages/filter-by-workspace-path/jest.debug.config.js",
         "--testTimeout",
         "300000",
         "--no-cache",

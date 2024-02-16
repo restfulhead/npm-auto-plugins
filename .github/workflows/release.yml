@@ -69,8 +69,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          for path in ${{ steps.get-workspaces.outputs.ws }}; do
-            cd $path
+          topdir=$(pwd)
+          for workspace in ${{ steps.get-workspaces.outputs.ws }}; do
+            echo "Potentially going to version and release $workspace"
+            cd $workspace
             mkdir .git
 
             PCKG_NAME=`node -pe "require('./package.json').name"`
@@ -80,38 +82,35 @@ jobs:
             if [ "$CUR_VERSION_NO" != "0.0.0" ]; then
               FROM_PARAM="--from ${PCKG_NAME}_v${CUR_VERSION_NO}"
             fi
-                
+
             VERSION=`npx auto version $FROM_PARAM`
             if [ ! -z "$VERSION" ]; then
+              echo "::notice title=✅ Detected $VERSION version change for $PCKG_NAME::Bumping version"
               npx auto changelog --base-branch ${{ steps.get-workspaces.outputs.branch }} $FROM_PARAM
-
-              unpushed_commits=$(git log origin/${{ steps.get-workspaces.outputs.branch }}..${{ steps.get-workspaces.outputs.branch }})
-
-              if [ -z "$unpushed_commits" ]; then
-                  echo "No changelog was generated for $PCKG_NAME"
-              else
-                npm version $VERSION -m "chore: bump release version to %s [skip ci]"
-                NEW_VERSION_NO=`node -pe "require('./package.json').version"`
-                git tag -d v$NEW_VERSION_NO
-                NEW_TAG=${PCKG_NAME}_v$NEW_VERSION_NO
-                echo "Going to create a new release for $NEW_TAG"
-                git add -A
-                git commit -m "chore: release v$NEW_VERSION_NO [skip ci]"
-                git tag -a $NEW_TAG -m "chore: tag v$NEW_VERSION_NO [skip ci]"
-                git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY" HEAD:${{ steps.get-workspaces.outputs.branch }} --follow-tags
-                npx auto release --use-version $NEW_TAG $FROM_PARAM --base-branch ${{ steps.get-workspaces.outputs.branch }}
-                IS_PRIVATE=`node -pe "require('./package.json').private"`
-                if [ "$IS_PRIVATE" != "true" ]; then
-                  npm publish ./dist
-                fi
+              npm version $VERSION -m "chore: bump release version to %s [skip ci]"
+              NEW_VERSION_NO=`node -pe "require('./package.json').version"`
+              git tag -d v$NEW_VERSION_NO
+              NEW_TAG=${PCKG_NAME}_v$NEW_VERSION_NO
+              echo "Going to create a new release for $NEW_TAG"
+              git add -A
+              git commit -m "chore: release v$NEW_VERSION_NO [skip ci]"
+              git tag -a $NEW_TAG -m "chore: tag v$NEW_VERSION_NO [skip ci]"
+              git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY" HEAD:${{ steps.get-workspaces.outputs.branch }} --follow-tags
+              npx auto release --use-version $NEW_TAG $FROM_PARAM --base-branch ${{ steps.get-workspaces.outputs.branch }}
+              IS_PRIVATE=`node -pe "require('./package.json').private"`
+              rm -rf .git
+              if [ "$IS_PRIVATE" != "true" ]; then
+                cd $topdir
+                echo "publishing $workspace/dist"
+                npm publish ./$workspace/dist
+                echo "::notice title=🚀 ${PCKG_NAME} v$NEW_VERSION_NO::Package versioned and published"
               fi
             else
-              echo 'Auto versioning failed.'
+              echo "::notice title=Versioning of $PCKG_NAME skipped::No relevant changes detected."
               exit 1
             fi
 
-            rm -rf .git
-            cd -
+            cd $topdir
           done
 
       - if: ${{ always() }}
