@@ -10,7 +10,6 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
 
   // auto adds the current path to the file paths reported from git, so we need to undo this
   const fixedFiles = commit.files.map((file) => path.relative(currentDir, file))
-  console.log(fixedFiles)
   const wsDir = path.join(currentWorkspace, path.sep)
 
   const atLeastOneFileInCurrentDir = fixedFiles.find((file) => inFolder(wsDir, file))
