@@ -10,6 +10,7 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
 
   // auto adds the current path to the file paths reported from git, so we need to undo this
   const fixedFiles = commit.files.map((file) => path.relative(currentDir, file))
+  console.log(fixedFiles)
   const wsDir = path.join(currentWorkspace, path.sep)
 
   const atLeastOneFileInCurrentDir = fixedFiles.find((file) => inFolder(wsDir, file))
@@ -28,16 +29,35 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
   }
 }
 
+export type ProjectFilteringPluginOptions ={
+  /** Path from the repo root to project we are filtering on */
+  non_npm: boolean,
+};
+
 export default class FilterByWorkspacePathPlugin implements IPlugin {
   /** The name of the plugin */
   name = 'filter-by-workspace-path-plugin'
 
+/** The options of the plugin */
+  readonly options: ProjectFilteringPluginOptions;
+
+  /** Initialize the plugin with it's options */
+  constructor(options: ProjectFilteringPluginOptions) {
+    this.options = options
+  }
+
+
   apply(auto: Auto): void {
+
     const currentDir = path.resolve('.')
-    const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-    const workspaceDeps: any = JSON.parse(npmResult).dependencies
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    const currentWorkspace = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved.substring(11)
+    let currentWorkspace = currentDir
+
+    if (!this.options.non_npm){
+        const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
+        const workspaceDeps: any = JSON.parse(npmResult).dependencies
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        currentWorkspace = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved.substring(11)
+    }
 
     auto.hooks.onCreateLogParse.tap(this.name, (logParse) => {
       logParse.hooks.omitCommit.tap(this.name, (commit) =>
