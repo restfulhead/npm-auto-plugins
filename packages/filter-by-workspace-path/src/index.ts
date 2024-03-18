@@ -52,8 +52,13 @@ export default class FilterByWorkspacePathPlugin implements IPlugin {
     if (this.options.npm) {
       const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const workspaceDeps: any = JSON.parse(npmResult).dependencies
+      const firstWsDep = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved
+      if (!firstWsDep.startsWith('file:')) {
+        throw new Error('This plugin only works with workspaces that are defined as file: dependencies in the root package.json.')
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      currentWorkspace = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved.substring(11)
+      currentWorkspace = path.basename(firstWsDep.substring(5))
     }
 
     auto.hooks.onCreateLogParse.tap(this.name, (logParse) => {
@@ -73,6 +78,7 @@ export default class FilterByWorkspacePathPlugin implements IPlugin {
         return origGetVersion(from, to)
       }
 
+      // TODO can be removed once https://github.com/intuit/auto/pull/2436 is released
       release.calcNextVersion = async (lastTag: string) => {
         const bump = await release.getSemverBump(lastTag)
         const matches = lastTag.match(/(\d+\.\d+\.\d+)/)
