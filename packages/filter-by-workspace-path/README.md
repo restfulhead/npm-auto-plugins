@@ -11,7 +11,7 @@ To start using this plugin, add it to your `.autorc` config, for example:
 ```json
 {
   "plugins": [
-    ["@restfulhead/auto-plugin-filter-by-workspace-path",{"non_npm":false}],
+    ["@restfulhead/auto-plugin-filter-by-workspace-path",{"npm":true}],
     "npm",
   ]
 }
@@ -20,9 +20,14 @@ To start using this plugin, add it to your `.autorc` config, for example:
 Then, if your project uses NPM workspaces and you run e.g. `auto changelog` not from the root directory, but directly from a workspace
 directory, then the changelog will only include pull requests that contain files inside the current workspace directory.
 
-If you're using auto without NPM you can specify `"non_npm": true` in the configuration, this way the plugin will filter out changes outside of the current folder `auto` is run from.
-
 However, carefully read the following caveats section.
+
+## Supported Config
+
+| Parameter               | Description                                                | Default  |
+| ----------------------- | ---------------------------------------------------------- | -------- |
+| `npm`       | Boolean to use NPM workspaces or not. In case you're using auto without NPM, specify `"npm": false`, this way the plugin will filter out changes outside of the current folder `auto` is run from. | `true`   |
+
 
 ## Caveats
 

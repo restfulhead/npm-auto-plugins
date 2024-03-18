@@ -30,7 +30,7 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
 
 export type ProjectFilteringPluginOptions ={
   /** Path from the repo root to project we are filtering on */
-  non_npm: boolean,
+  npm: boolean,
 };
 
 export default class FilterByWorkspacePathPlugin implements IPlugin {
@@ -41,7 +41,7 @@ export default class FilterByWorkspacePathPlugin implements IPlugin {
   readonly options: ProjectFilteringPluginOptions;
 
   /** Initialize the plugin with it's options */
-  constructor(options: ProjectFilteringPluginOptions) {
+  constructor(options: ProjectFilteringPluginOptions = {"npm":true}) {
     this.options = options
   }
 
@@ -51,7 +51,7 @@ export default class FilterByWorkspacePathPlugin implements IPlugin {
     const currentDir = path.resolve('.')
     let currentWorkspace = currentDir
 
-    if (!this.options.non_npm){
+    if (this.options.npm){
         const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
         const workspaceDeps: any = JSON.parse(npmResult).dependencies
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers

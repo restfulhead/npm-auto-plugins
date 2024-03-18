@@ -8,7 +8,7 @@ import Release from '@auto-it/core/dist/release'
 import FilterByPathPlugin from '../src'
 
 const setup = () => {
-  const plugin = new FilterByPathPlugin({"non_npm":false})
+  const plugin = new FilterByPathPlugin()
   const hooks = makeHooks()
   const logger = createLog()
   const logParseHooks = makeLogParseHooks()
