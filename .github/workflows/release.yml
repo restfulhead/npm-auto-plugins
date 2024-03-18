@@ -105,7 +105,6 @@ jobs:
               rm -rf .git
             else
               echo "::notice title=Versioning of $PCKG_NAME skipped::No relevant changes detected."
-              exit 1
             fi
 
             cd $topdir
