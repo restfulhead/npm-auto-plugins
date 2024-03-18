@@ -28,34 +28,32 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
   }
 }
 
-export type ProjectFilteringPluginOptions ={
+export interface ProjectFilteringPluginOptions {
   /** Path from the repo root to project we are filtering on */
-  npm: boolean,
-};
+  npm: boolean
+}
 
 export default class FilterByWorkspacePathPlugin implements IPlugin {
   /** The name of the plugin */
   name = 'filter-by-workspace-path-plugin'
 
-/** The options of the plugin */
-  readonly options: ProjectFilteringPluginOptions;
+  /** The options of the plugin */
+  readonly options: ProjectFilteringPluginOptions
 
   /** Initialize the plugin with it's options */
-  constructor(options: ProjectFilteringPluginOptions = {"npm":true}) {
+  constructor(options: ProjectFilteringPluginOptions = { npm: true }) {
     this.options = options
   }
 
-
   apply(auto: Auto): void {
-
     const currentDir = path.resolve('.')
     let currentWorkspace = currentDir
 
-    if (this.options.npm){
-        const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-        const workspaceDeps: any = JSON.parse(npmResult).dependencies
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        currentWorkspace = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved.substring(11)
+    if (this.options.npm) {
+      const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
+      const workspaceDeps: any = JSON.parse(npmResult).dependencies
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      currentWorkspace = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved.substring(11)
     }
 
     auto.hooks.onCreateLogParse.tap(this.name, (logParse) => {
