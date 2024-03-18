@@ -96,10 +96,10 @@ jobs:
               DEBUG_FLAG="-vv"
             fi
 
-            VERSION=`npx auto version $FROM_PARAM`
+            VERSION=`npx auto version $FROM_PARAM $DEBUG_FLAG`
             if [ ! -z "$VERSION" ]; then
               echo "::notice title=✅ Detected $VERSION version change for $PCKG_NAME::Bumping version"
-              npx auto changelog --base-branch ${{ steps.get-workspaces.outputs.branch }} $FROM_PARAM
+              npx auto changelog --base-branch ${{ steps.get-workspaces.outputs.branch }} $FROM_PARAM $DEBUG_FLAG
               npm version $VERSION -m "chore: bump release version to %s [skip ci]" || true
               NEW_VERSION_NO=`node -pe "require('./package.json').version"`
               git tag -d v$NEW_VERSION_NO || true
@@ -109,7 +109,7 @@ jobs:
               git commit -m "chore: release v$NEW_VERSION_NO [skip ci]" || true
               git tag -a $NEW_TAG -m "chore: tag v$NEW_VERSION_NO [skip ci]"
               git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY" HEAD:${{ steps.get-workspaces.outputs.branch }} --follow-tags
-              npx auto release --use-version $NEW_TAG $FROM_PARAM --base-branch ${{ steps.get-workspaces.outputs.branch }}
+              npx auto release --use-version $NEW_TAG $FROM_PARAM --base-branch ${{ steps.get-workspaces.outputs.branch }} $DEBUG_FLAG
               IS_PRIVATE=`node -pe "require('./package.json').private"`
               if [ "$IS_PRIVATE" != "true" ]; then
                 npm publish ./dist
