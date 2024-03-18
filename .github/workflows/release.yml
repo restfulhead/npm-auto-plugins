@@ -80,20 +80,33 @@ jobs:
 
             FROM_PARAM=""
             if [ "$CUR_VERSION_NO" != "0.0.0" ]; then
-              FROM_PARAM="--from ${PCKG_NAME}_v${CUR_VERSION_NO}"
+              TAG_NAME="${PCKG_NAME}_v${CUR_VERSION_NO}"
+              
+              REMOTE_TAGS=`git ls-remote --tags "https://$GITHUB_ACTOR:$GH_TOKEN@github.com/$GITHUB_REPOSITORY"`
+              if echo "$REMOTE_TAGS" | grep -q "refs/tags/${TAG_NAME}"; then
+                echo "Identified previous release as ${TAG_NAME}."
+                FROM_PARAM="--from $TAG_NAME"
+              else
+                echo "::warning title=No previous tag found under ${TAG_NAME}:: This release will be based on the current branch."
+              fi
+            fi
+
+            DEBUG_FLAG=
+            if [ "${{ runner.debug}}" == "1" ]; then
+              DEBUG_FLAG="-vv"
             fi
 
             VERSION=`npx auto version $FROM_PARAM`
             if [ ! -z "$VERSION" ]; then
               echo "::notice title=✅ Detected $VERSION version change for $PCKG_NAME::Bumping version"
               npx auto changelog --base-branch ${{ steps.get-workspaces.outputs.branch }} $FROM_PARAM
-              npm version $VERSION -m "chore: bump release version to %s [skip ci]"
+              npm version $VERSION -m "chore: bump release version to %s [skip ci]" || true
               NEW_VERSION_NO=`node -pe "require('./package.json').version"`
-              git tag -d v$NEW_VERSION_NO
+              git tag -d v$NEW_VERSION_NO || true
               NEW_TAG=${PCKG_NAME}_v$NEW_VERSION_NO
               echo "Going to create a new release for $NEW_TAG"
               git add -A
-              git commit -m "chore: release v$NEW_VERSION_NO [skip ci]"
+              git commit -m "chore: release v$NEW_VERSION_NO [skip ci]" || true
               git tag -a $NEW_TAG -m "chore: tag v$NEW_VERSION_NO [skip ci]"
               git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY" HEAD:${{ steps.get-workspaces.outputs.branch }} --follow-tags
               npx auto release --use-version $NEW_TAG $FROM_PARAM --base-branch ${{ steps.get-workspaces.outputs.branch }}
