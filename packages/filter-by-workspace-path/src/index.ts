@@ -10,7 +10,7 @@ function shouldOmitCommit(currentWorkspace: string, commit: IExtendedCommit, log
 
   const wsDir = path.join(currentWorkspace, path.sep)
 
-  const atLeastOneFileInCurrentDir =  commit.files.find((file) => inFolder(wsDir, file))
+  const atLeastOneFileInCurrentDir = commit.files.find((file) => inFolder(wsDir, file))
 
   if (!atLeastOneFileInCurrentDir) {
     logger.verbose.log(`All files are outside the current workspace directory ('${wsDir}'). Omitting commit '${commit.hash}'.`)
@@ -21,7 +21,9 @@ function shouldOmitCommit(currentWorkspace: string, commit: IExtendedCommit, log
       return true
     }
 
-    logger.verbose.log(`At least one file is in the current workspace ('${atLeastOneFileInCurrentDir}' in '${wsDir}'). Including commit '${commit.hash}'.`)
+    logger.verbose.log(
+      `At least one file is in the current workspace ('${atLeastOneFileInCurrentDir}' in '${wsDir}'). Including commit '${commit.hash}'.`
+    )
     return false
   }
 }
@@ -51,16 +53,15 @@ export default class FilterByWorkspacePathPlugin implements IPlugin {
       const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const workspaceDeps: any = JSON.parse(npmResult).dependencies
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      const resolved= workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved
-      // resolved looks like 'file:../../packages/filter-by-workspace-path'
-      const npm_relative_workspace_path = String(resolved).split(":",2)[1]
-      currentWorkspace = path.resolve(currentDir,npm_relative_workspace_path)
+      const resolved = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved
+      // 'resolved' var looks like 'file:../../packages/filter-by-workspace-path'
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      const relativeWorkspacePath = String(resolved).split(':', 2)[1]
+      currentWorkspace = path.resolve(currentDir, relativeWorkspacePath)
     }
 
     auto.hooks.onCreateLogParse.tap(this.name, (logParse) => {
-      logParse.hooks.omitCommit.tap(this.name, (commit) =>
-        shouldOmitCommit(currentWorkspace, commit, auto.logger) ? true : undefined
-      )
+      logParse.hooks.omitCommit.tap(this.name, (commit) => (shouldOmitCommit(currentWorkspace, commit, auto.logger) ? true : undefined))
     })
 
     auto.hooks.onCreateRelease.tap(this.name, (release) => {

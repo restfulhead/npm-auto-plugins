@@ -5,11 +5,10 @@ import LogParse from '@auto-it/core/dist/log-parse'
 import { makeHooks, makeLogParseHooks, makeReleaseHooks } from '@auto-it/core/dist/utils/make-hooks'
 import createLog from '@auto-it/core/dist/utils/logger'
 import Release from '@auto-it/core/dist/release'
-import FilterByWorkspacePathPlugin from '../src'
-import { ProjectFilteringPluginOptions } from '../src'
+import FilterByWorkspacePathPlugin, { ProjectFilteringPluginOptions } from '../src'
 
-const setup = (plugin_options: ProjectFilteringPluginOptions) => {
-  const plugin = new FilterByWorkspacePathPlugin(plugin_options)
+const setup = (pluginOptions: ProjectFilteringPluginOptions) => {
+  const plugin = new FilterByWorkspacePathPlugin(pluginOptions)
   const hooks = makeHooks()
   const logger = createLog()
   const logParseHooks = makeLogParseHooks()
@@ -26,7 +25,7 @@ const setup = (plugin_options: ProjectFilteringPluginOptions) => {
 }
 
 describe('Test plugin omits commits when using NPM', () => {
-  const hooks = setup({"npm":true})
+  const hooks = setup({ npm: true })
 
   it('should not filter the commit single file', async () => {
     const commit = makeCommitFromMsg('foo', {
@@ -96,7 +95,7 @@ describe('Test plugin omits commits when using NPM', () => {
 })
 
 describe('Test plugin omits commits without NPM', () => {
-  const hooks = setup({"npm":false})
+  const hooks = setup({ npm: false })
 
   it('should not filter the commit single file', async () => {
     const commit = makeCommitFromMsg('foo', {
