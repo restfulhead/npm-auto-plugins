@@ -22,7 +22,7 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ inputs.git-ref }}
@@ -33,9 +33,9 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: "npm"
           cache-dependency-path: "package-lock.json"
           registry-url: 'https://registry.npmjs.org'
@@ -98,26 +98,25 @@ jobs:
 
             VERSION=`npx auto version $FROM_PARAM $DEBUG_FLAG`
             if [ ! -z "$VERSION" ]; then
-              echo "::notice title=✅ Detected $VERSION version change for $PCKG_NAME::Bumping version"
+              echo "::notice title=✅ Detected $VERSION version change for $PCKG_NAME::Bumping $VERSION version of $PCKG_NAME"
               npx auto changelog --base-branch ${{ steps.get-workspaces.outputs.branch }} $FROM_PARAM $DEBUG_FLAG
-              npm version $VERSION -m "chore: bump release version to %s [skip ci]" || true
+              npm run build
+              echo "npm version $VERSION -m 'chore: bump release version to %s [skip ci]'"
+              npm version $VERSION --tag-version-prefix="${PCKG_NAME}_v" -m "chore: bump release version to %s [skip ci]"
               NEW_VERSION_NO=`node -pe "require('./package.json').version"`
-              git tag -d v$NEW_VERSION_NO || true
               NEW_TAG=${PCKG_NAME}_v$NEW_VERSION_NO
-              echo "Going to create a new release for $NEW_TAG"
               git add -A
-              git commit -m "chore: release v$NEW_VERSION_NO [skip ci]" || true
-              git tag -a $NEW_TAG -m "chore: tag v$NEW_VERSION_NO [skip ci]"
+              git commit -m "chore: release $NEW_TAG [skip ci]"
               git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY" HEAD:${{ steps.get-workspaces.outputs.branch }} --follow-tags
               npx auto release --use-version $NEW_TAG $FROM_PARAM --base-branch ${{ steps.get-workspaces.outputs.branch }} $DEBUG_FLAG
               IS_PRIVATE=`node -pe "require('./package.json').private"`
               if [ "$IS_PRIVATE" != "true" ]; then
                 npm publish ./dist
-                echo "::notice title=🚀 ${PCKG_NAME} v$NEW_VERSION_NO::Package versioned and published"
+                echo "::notice title=🚀 ${PCKG_NAME} v$NEW_VERSION_NO::Package ${PCKG_NAME} v$NEW_VERSION_NO versioned and published"
               fi
               rm -rf .git
             else
-              echo "::notice title=Versioning of $PCKG_NAME skipped::No relevant changes detected."
+              echo "::notice title=Versioning of $PCKG_NAME skipped::No relevant changes detected for $PCKG_NAME."
             fi
 
             cd $topdir

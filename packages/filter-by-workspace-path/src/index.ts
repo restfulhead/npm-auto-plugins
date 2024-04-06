@@ -3,16 +3,14 @@ import * as path from 'path'
 import { Auto, IExtendedCommit, ILogger, IPlugin, SEMVER, inFolder } from '@auto-it/core'
 import { inc, ReleaseType } from 'semver'
 
-function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: IExtendedCommit, logger: ILogger): boolean {
+function shouldOmitCommit(currentWorkspace: string, commit: IExtendedCommit, logger: ILogger): boolean {
   if (!commit.pullRequest) {
     return true
   }
 
-  // auto adds the current path to the file paths reported from git, so we need to undo this
-  const fixedFiles = commit.files.map((file) => path.relative(currentDir, file))
   const wsDir = path.join(currentWorkspace, path.sep)
 
-  const atLeastOneFileInCurrentDir = fixedFiles.find((file) => inFolder(wsDir, file))
+  const atLeastOneFileInCurrentDir = commit.files.find((file) => inFolder(wsDir, file))
 
   if (!atLeastOneFileInCurrentDir) {
     logger.verbose.log(`All files are outside the current workspace directory ('${wsDir}'). Omitting commit '${commit.hash}'.`)
@@ -23,7 +21,9 @@ function shouldOmitCommit(currentDir: string, currentWorkspace: string, commit: 
       return true
     }
 
-    logger.verbose.log(`At least one file is in the current workspace ('${wsDir}'). Including commit '${commit.hash}'.`)
+    logger.verbose.log(
+      `At least one file is in the current workspace ('${atLeastOneFileInCurrentDir}' in '${wsDir}'). Including commit '${commit.hash}'.`
+    )
     return false
   }
 }
@@ -53,13 +53,15 @@ export default class FilterByWorkspacePathPlugin implements IPlugin {
       const npmResult = execSync('npm ls --omit=dev --depth 1 -json', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const workspaceDeps: any = JSON.parse(npmResult).dependencies
       // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-      currentWorkspace = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved.substring(11)
+      const resolved = workspaceDeps[Object.keys(workspaceDeps)[0] as any].resolved
+      // 'resolved' var looks like 'file:../../packages/filter-by-workspace-path'
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      const relativeWorkspacePath = String(resolved).split(':', 2)[1]
+      currentWorkspace = path.resolve(currentDir, relativeWorkspacePath)
     }
 
     auto.hooks.onCreateLogParse.tap(this.name, (logParse) => {
-      logParse.hooks.omitCommit.tap(this.name, (commit) =>
-        shouldOmitCommit(currentDir, currentWorkspace, commit, auto.logger) ? true : undefined
-      )
+      logParse.hooks.omitCommit.tap(this.name, (commit) => (shouldOmitCommit(currentWorkspace, commit, auto.logger) ? true : undefined))
     })
 
     auto.hooks.onCreateRelease.tap(this.name, (release) => {
