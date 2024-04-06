@@ -1,6 +1,6 @@
 {
     "name": "@restfulhead/npm-auto-plugin-example-test-package",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "An example package used to test that versioning the other package does not impact this one.",
     "author": "Patrick Ruhkopf",
     "license": "MIT",
