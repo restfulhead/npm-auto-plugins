@@ -1,3 +1,20 @@
+# v0.2.0 (Sat Apr 06 2024)
+
+#### 🚀 Enhancement
+
+- Fixed and improved tests for non-npm usage [#29](https://github.com/restfulhead/npm-auto-plugins/pull/29) ([@Maxim-Durand](https://github.com/Maxim-Durand))
+
+#### 🔩 Internal
+
+- chore: ci workflow improvements [#30](https://github.com/restfulhead/npm-auto-plugins/pull/30) ([@restfulhead](https://github.com/restfulhead))
+
+#### Authors: 2
+
+- Maxime Durand ([@Maxim-Durand](https://github.com/Maxim-Durand))
+- Patrick Ruhkopf ([@restfulhead](https://github.com/restfulhead))
+
+---
+
 # v0.1.0 (Mon Mar 18 2024)
 
 #### 🚀 Enhancement
